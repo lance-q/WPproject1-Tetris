@@ -2,14 +2,14 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContsxt("2d");
 
-//type(angle=0)
+//type
 //1 ****    2 **    3 **   4 **
 //            **      *       *
 //                    *       *
 //5 **      6 **    7  *
 //   **      **       ***
 
-
+var data=[[], [], [], []];
 class obj_falling
 {
     constructor()
@@ -18,7 +18,7 @@ class obj_falling
         this.shape=Shape[this.type];
         this.angle=0;
         //this.color=Color[this.type];
-        this.x=40;
+        this.x=3;
         this.y=0;
     }
 
@@ -42,8 +42,19 @@ class obj_falling
     {
         if(key.keyCode == 38)
         {
-            angle+=90;//clockwise
-            if(angle == 360) {angle=0;}
+            var tmp=[[], [], [], []];
+            for(let i=0; i<4; i++)
+            {
+                tmp[i][0]=data[i][1];
+                tmp[i][1]=-data[i][0];
+            }
+            if(checkCol() == 1)
+            {for(let i=0; i<4; i++)
+                {
+                    data[i][0]=tmp[i][0];
+                    data[i][1]=tmp[i][1];
+                }
+            }
         }
     }
 
@@ -56,7 +67,18 @@ class obj_falling
 document.addEventListener("keydown", obj_falling.rotate(key));
 
 
+function translate(x,y,orig)//2-dimensional directly use(?)
+{
+    var tmp=[];
+    
+    for(let i=0; i<4; i++)
+        {
+            tmp[i][0]=orig[i][0];
+            tmp[i][1]=orig[i][1];
+        }
 
+    return tmp;
+}
 
 function drawSquare(x,y)
 {
