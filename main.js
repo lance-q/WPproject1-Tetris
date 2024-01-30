@@ -1,60 +1,124 @@
-var canvas = document.getElementById('canvas');
-var ctx = canvas.getContext('2d');
+//100*200
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContsxt("2d");
 
-//二维数组
-var rows = 10;
-var cols = 10;
+//keydown
+document.addEventListener("keydown", obj_falling.rotate(key));
+
+//type(angle=0)
+//1 ****    2 **    3 **   4 **
+//            **      *       *
+//                    *       *
+//5 **      6 **    7  *
+//   **      **       ***
+
+//class
+class obj_falling
+{
+    constructor()
+    {
+        this.type=Math.floor(Math.random()*7)+1;
+        this.shape=Shape[this.type];
+        this.angle=0;
+        //this.color=Color[this.type];
+        this.x=40;
+        this.y=0;
+    }
+
+    move(key)
+    {
+        switch(key.keyCode)
+        {
+            case 37:
+                if(x>0) {x-=10;} break;
+            case 39:
+                if(x<90) {x+=10;} break;
+        }
+    }
+
+    fall()
+    {
+        y+=10;
+    }
+
+    rotate(key)
+    {
+        if(key.keyCode == 38)
+        {
+            angle+=90;//clockwise
+            if(angle == 360) {angle=0;}
+        }
+    }
+
+    draw()
+    {
+        for(i=0;i<4;i++)
+        {
+
+        }
+    }
+}
+
+//2-d board
+var row = 20;
+var col = 10;
 var board = [];
-for (var i = 0; i < rows; i++) {
+for (var i = 0; i < row; i++) {
   board[i] = [];
-  for (var j = 0; j < cols; j++) {
+  for (var j = 0; j < col; j++) {
     board[i][j] = 0;
   }
 }
-//console.log(matrix);
 
-
-function draw(){
-    ctx.clearRect(0, 0, 300, 150); // Clear the canvas
-    //draw grid
-
-    // 定义棋盘格子的大小和颜色
-    var gridSize = 50;
-    var lightColor = '#f0d9b5';
-    var darkColor = '#b58863';
-  
-    // 绘制棋盘格子的函数
-    function drawChessboard() {
-      for (var row = 0; row < canvas.height / gridSize; row++) {
-        for (var col = 0; col < canvas.width / gridSize; col++) {
-          if ((row + col) % 2 === 0) {
-            ctx.fillStyle = lightColor;
-          } else {
-            ctx.fillStyle = darkColor;
-          }
-          ctx.fillRect(col * gridSize, row * gridSize, gridSize, gridSize);
-        }
-      }
+//draw 小函数
+//单个格子
+function drawSquare(x,y)
+{
+    ctx.beginPath();
+    ctx.fillRect(x+1,y+1,8,8);
+    ctx.stroke();
+}
+function drawMap()
+{
+    ctx.beginPath();
+    for(let i=0; i<=100; i+=10)
+    {
+        ctx.moveto(i,0);
+        ctx.lineto(i,200);
+        ctx.stroke();   
     }
-  
-    // 初始绘制
-    drawChessboard();
-  
-    //draw board
-    for (var i = 0; i < rows; i++) {
-        for (var j = 0; j < cols; j++) {
+
+    for(let i=0; i<=200; i+=10)
+        {
+            ctx.moveto(0,i);
+            ctx.lineto(100,i);
+            ctx.stroke();
+        }
+}
+function drawBoard()
+{
+    for (var i = 0; i < row; i++) {
+        for (var j = 0; j < col; j++) {
           if(board[i][j] != 0){
-            //fill
+            drawSquare(j*10,i*10);
           }
         }
-      }
-    //draw (falling) object
-    //draw();
+      }    
 }
 
-function ifcolli(){
-if(){
+function drawAll(){
+    ctx.clearRect(0, 0, 100, 200); // Clear the canvas
+    drawMap();
+    drawBoard();
+    //draw (falling) object
+    draw();
+}
 
+
+function ifcolli(){
+    if(){
+
+    }
 }
 
 function iffail(){
