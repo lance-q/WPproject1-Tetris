@@ -56,7 +56,6 @@ function ifcolli(){
 if(){
 
 }
-}
 
 function iffail(){
 
