@@ -65,3 +65,20 @@ function drawSquare(x,y)
     ctx.stroke();
 }
 
+function drawMap()
+{
+    ctx.beginPath();
+    for(let i=0; i<=100; i+=10)
+    {
+        ctx.moveto(i,0);
+        ctx.lineto(i,200);
+        ctx.stroke();   
+    }
+
+    for(let i=0; i<=200; i+=10)
+        {
+            ctx.moveto(0,i);
+            ctx.lineto(100,i);
+            ctx.stroke();
+        }
+}
