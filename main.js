@@ -18,7 +18,7 @@ var obj_falling = function()
     this.shape=Shape[this.type];
     //this.color=Color[this.type];
 
-    this.move(key)
+    this.move = function(key)
     {
         switch(key.keyCode)
         {
@@ -29,12 +29,12 @@ var obj_falling = function()
         }
     }
 
-    this.fall()
+    this.fall = function()
     {
         y+=10;
     }
 
-    this.rotate(key)
+    this.rotate = function(key)
     {
         if(key.keyCode == 38)
         {
@@ -54,7 +54,7 @@ var obj_falling = function()
         }
     }
 
-    draw()
+    this.draw = function()
     {
         
     }
