@@ -39,43 +39,18 @@ var Shape =
 //class
 var data = [[], [], [], []];
 var obj_falling = function () {
-    this.x = 3;
-    this.y = 0;
+    this.x = 4;
+    this.y = -1;
     this.type = Math.floor(Math.random() * 7) + 1;
     data = Shape[this.type];
     //this.color=Color[this.type];
-
-    this.move = function (key) {
-        switch (key.keyCode) {
-            case 37:
-                if (this.x > 0) { this.x -= 10; } break;
-            case 39:
-                if (this.x < 90) { this.x += 10; } break;
-        }
-    }
 
     this.fall = function () {
         if (photogram == delay) { photogram = 0; this.y++; }
     }
 
-    this.rotate = function (key) {
-        if (key.keyCode == 38) {
-            var tmp = [[], [], [], []];
-            for (let i = 0; i < 4; i++) {
-                tmp[i][0] = data[i][1];
-                tmp[i][1] = -data[i][0];
-            }
-            if (checkCol(tmp) == 1) {
-                for (let i = 0; i < 4; i++) {
-                    data[i][0] = tmp[i][0];
-                    data[i][1] = tmp[i][1];
-                }
-            }
-        }
-    }
-
     this.draw = function () {
-        let location = translate(this.x, this.y, data);
+        let location = translate(this.x, this.y);
         for (let i = 0; i < 4; i++) {
             drawSquare(location[i][0] * 10, location[i][1] * 10);
         }
@@ -95,8 +70,13 @@ function translate(x, y)//2-dimensional directly transport(?)
     return global;
 }
 
-function checkCol(data) {
-    var next = translate(this.x, this.y, data);
+function checkCol(tmp) {
+    var next = [[],[],[],[]];
+    for(let i=0; i<4; i++)
+    {
+        next[i]=translate(tmp[i][0], tmp[i][1]);
+    }
+
     var flag = 1, i = 0;
     do {
         var sx = next[i][0], sy = next[i][1];
@@ -109,8 +89,6 @@ function checkCol(data) {
     return flag
 }
 
-//keydown
-document.addEventListener("keydown", obj_falling.rotate);
 
 //clear line
 function clearline(i) {
@@ -159,11 +137,12 @@ function drawMap() {
         ctx.stroke();
     }
 }
+
 function drawBoard() {
     for (var i = 0; i < col; i++) {
         for (var j = 0; j < row; j++) {
             if (board[i][j] != 0) {
-                drawSquare(j * 10, i * 10);
+                drawSquare(i * 10, j * 10);
             }
         }
     }
@@ -191,8 +170,8 @@ function resetblock(block) {
             board[data[i][0] + block.x][data[i][1] + block.y] = 1;
         }
         // delete block;
-        block.x = 3;
-        block.y = 0;
+        block.x = 4;
+        block.y = -1;
         block.type = Math.floor(Math.random() * 7) + 1;
         block.data = Shape[block.type];
     }
@@ -202,9 +181,38 @@ function initialize() {
     //create a block
     block = new obj_falling();
     console.log(block);
+
     //listen to the keyboard
-    //document.addEventListener("keydown", obj_falling.rotate);
-    // document.addEventListener("keydown", obj_falling.move);
+    //rotate
+    document.addEventListener("keydown", function(key){
+        if (key.keyCode == 38)
+        {
+            var tmp = [[], [], [], []];
+            for (let i = 0; i < 4; i++) {
+                tmp[i][0] = data[i][1];
+                tmp[i][1] = -data[i][0];
+            }
+
+            if (checkCol(tmp) == 1) {
+                for (let i = 0; i < 4; i++) {
+                    data[i][0] = tmp[i][0];
+                    data[i][1] = tmp[i][1];
+                }
+            }
+        }
+    });
+
+    //move
+    document.addEventListener("keydown", function(key){
+        switch (key.keyCode)
+        {
+            case 37:
+                if (this.x > 0) { this.x -= 10; } break;
+            case 39:
+                if (this.x < 90) { this.x += 10; } break;
+        }
+    }
+);
 
     drawAll(block);
 
