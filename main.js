@@ -9,7 +9,18 @@ const ctx = canvas.getContsxt("2d");
 //
 //5 **      6 **    7  *
 //   **      **       ***
-//
+
+var Shape = 
+[
+    [],//type0 has no shape
+    [[-1,0],[0,0],[1,0],[2,0]],
+    [[0,0],[0,1],[1,0],[1,1]],
+    [[-1,0],[0,0],[1,0],[1,-1]],
+    [[-1,-1],[-1,0],[0,0],[1,0]],
+    [[-1,1],[0,1],[0,0],[1,0]],
+    [[-1,-1],[0,-1],[0,0],[1,0]],
+    [[-1,0],[0,0],[0,1],[1,0]]
+];
 
 //class
 var data=[[], [], [], []];
@@ -180,7 +191,7 @@ function drawAll(){
     drawMap();
     drawBoard();
     //draw (falling) object
-    obj_falling. draw();
+    obj_falling. draw(); 
 }
 
 function iffail(){
