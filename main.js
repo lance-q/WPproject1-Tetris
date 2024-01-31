@@ -1,8 +1,10 @@
+//魔改版 目前可以动 其他还没试
 //100*200
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const delay=5;
 var photogram=0;
+
 
 //type(angle=0)
 //1 ****    2 **    3 **   4 **
@@ -35,6 +37,10 @@ var Shape =
     [[-1,-1],[0,-1],[0,0],[1,0]],
     [[-1,0],[0,0],[0,1],[1,0]]
 ];
+
+var coordinate =
+[[5,4],[5,4],[5,4],[5,4]];
+
 
 //class
 var data=[[], [], [], []];
@@ -85,17 +91,30 @@ var obj_falling = function()
 
     this.draw = function()
     {
-        location=translate(this.x,this.y,data);
+        //var location=[[],[],[],[]];
+        //location=translate(this.x,this.y);
+        
         for(i=0;i<4;i++)
         {
-            drawSquare(location[i][0]*10,location[i][1]*10);
+            drawSquare(data[i][0]*10,data[i][1]*10);
         }
+    }
+    this.update = function(){
+        data = [
+        [this.x+object.shape[0][0],this.y+object.shape[0][1]],
+        [this.x+object.shape[1][0],this.y+object.shape[1][1]],
+        [this.x+object.shape[2][0],this.y+object.shape[2][1]],
+        [this.x+object.shape[3][0],this.y+object.shape[3][1]]
+    ]
     }
 }
 
+var object = new obj_falling;
+
+
 function translate(x,y)//2-dimensional directly transport(?)
 {
-    var global=[];
+    var global=[[],[],[],[]];
     
     for(let i=0; i<4; i++)
         {
@@ -123,10 +142,11 @@ function checkCol(data)
 }
 
 //keydown
-document.addEventListener("keydown", obj_falling.rotate);
+document.addEventListener("keydown", object.rotate);
 
 //clear line
-function clearline(i) {
+function clearline(i) 
+{
     for (let j = 0; j < 10; j++) {
         board[i][j] = 0;
     }
@@ -136,7 +156,10 @@ function clearline(i) {
         }
     }
 }
-function checkline() {
+
+
+function checkline() 
+{
     for (let i = 0; i < 20; i++) {
         let fullLine = true;
         for (let j = 0; j < 10; j++) {
@@ -155,7 +178,7 @@ function checkline() {
 //单个格子
 function drawSquare(x,y)
 {
-    ctx.beginPath();
+    ctx.beginPath(x,y);
     ctx.fillRect(x+1,y+1,8,8);
     ctx.stroke();
 }
@@ -192,7 +215,7 @@ function drawAll(){
     drawMap();
     drawBoard();
     //draw (falling) object
-    obj_falling. draw(); 
+    object.draw(); 
 }
 
 function resetblock(){
@@ -216,25 +239,35 @@ function resetblock(){
 function initialize()
 {
     //create a block
-    var block=new obj_falling();
+    //var block=new obj_falling();
 
     //listen to the keyboard
-    document.addEventListener("keydown", block.rotate);
-    document.addEventListener("keydown", block.move);
+    document.addEventListener("keydown",object.rotate);
+    document.addEventListener("keydown",object.move);
 
+    object.update();
     drawAll();
 
+
     setInterval(function(){main();}, 100);
+    main();
 }
+
 
 function main()
 {
-    
-    checkline();
+    object.fall();
+    //checkline();
+    object.update();
     drawAll();
-    
+    //test();
+    //console.log(photogram);
     //if a block falls to the bottom, create a new one
 
     
     photogram++;
 }
+
+
+//console.log(object);
+//console.log(data);
