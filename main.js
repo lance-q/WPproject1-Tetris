@@ -26,15 +26,15 @@ var obj_falling = function()
         switch(key.keyCode)
         {
             case 37:
-                if(x>0) {x-=10;} break;
+                if(this.x>0) {this.x-=10;} break;
             case 39:
-                if(x<90) {x+=10;} break;
+                if(this.x<90) {this.x+=10;} break;
         }
     }
 
     this.fall = function()
     {
-        y+=10;
+        this.y+=10;
     }
 
     this.rotate = function(key)
@@ -59,16 +59,16 @@ var obj_falling = function()
 
     this.draw = function()
     {
-        location=translate(x,y,data);
-        for(i=0;i++;i<4)
+        location=translate(this.x,this.y,data);
+        for(i=0;i<4;i++)
         {
-            drawSquare(data[i][0]*10,data[i][1]*10);
+            drawSquare(location[i][0]*10,location[i][1]*10);
         }
     }
 }
 
 //keydown
-document.addEventListener("keydown", obj_falling.rotate(key));
+document.addEventListener("keydown", obj_falling.rotate);
 
 //collision detect
 function checkCol(orig)
@@ -88,7 +88,7 @@ function checkCol(orig)
 }
 
 //translate
-function translate(x,y,orig)//2-dimensional directly use(?)
+function translate(x,y,orig)//1-dimensional directly use(?)
 {
     var tmp=[];
     
@@ -152,15 +152,15 @@ function drawMap()
     ctx.beginPath();
     for(let i=0; i<=100; i+=10)
     {
-        ctx.moveto(i,0);
-        ctx.lineto(i,200);
+        ctx.moveTo(i,0);
+        ctx.lineTo(i,200);
         ctx.stroke();   
     }
 
     for(let i=0; i<=200; i+=10)
         {
-            ctx.moveto(0,i);
-            ctx.lineto(100,i);
+            ctx.moveTo(0,i);
+            ctx.lineTo(100,i);
             ctx.stroke();
         }
 }
