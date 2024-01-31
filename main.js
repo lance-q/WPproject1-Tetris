@@ -9,6 +9,9 @@ const ctx = canvas.getContsxt("2d");
 //5 **      6 **    7  *
 //   **      **       ***
 
+const delay=5;
+var photogram=0;
+
 var Shape = 
 [
     [],//type0 has no shape
@@ -35,15 +38,16 @@ var obj_falling = function()
         switch(key.keyCode)
         {
             case 37:
-                if(x>0) {x-=10;} break;
+                if(this.x>0) {this.x-=10;} break;
             case 39:
-                if(x<90) {x+=10;} break;
+                if(this.x<90) {this.x+=10;} break;
         }
     }
 
     this.fall = function()
     {
-        y+=10;
+        if(photogram == delay)
+        {photogram=0; this.y++;}
     }
 
     this.rotate = function(key)
@@ -65,14 +69,7 @@ var obj_falling = function()
             }
         }
     }
-
-    this.draw = function()
-    {
-        
-    }
 }
-
-document.addEventListener("keydown", obj_falling.rotate(key));
 
 
 function translate(x,y,local)//2-dimensional directly transport(?)
@@ -123,3 +120,26 @@ function drawMap()
             ctx.stroke();
         }
 }
+
+function initialize()
+{
+    //create a block
+    block=new obj_falling();
+
+    //listen to the keyboard
+    document.addEventListener("keydown", block.rotate(key));
+    document.addEventListener("keydown", bolck.move(key));
+
+    setInterval(function(){main();}, 100);
+}
+
+function main()
+{
+    drawAll();
+    
+    //if a block falls to the bottom, create a new one
+
+    
+    photogram++;
+}
+
