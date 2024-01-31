@@ -1,6 +1,6 @@
 //100*200
 const canvas = document.getElementById("canvas");
-const ctx = canvas.getContsxt("2d");
+const ctx = canvas.getContext("2d");
 const delay=5;
 var photogram=0;
 
@@ -95,10 +95,10 @@ var obj_falling = function()
 
 function translate(x,y,local)//2-dimensional directly transport(?)
 {
-    var global=[];
-    
+    var global=[];    
     for(let i=0; i<4; i++)
         {
+            global[i] = [];
             global[i][0]=local[i][0]+x;
             global[i][1]=local[i][1]+y;
         }
@@ -189,7 +189,7 @@ function drawAll(){
     drawMap();
     drawBoard();
     //draw (falling) object
-    obj_falling. draw(); 
+    block. draw(); 
 }
 
 function resetblock(){
@@ -203,7 +203,7 @@ function resetblock(){
         for(let i=0;i<4;i++){
             board[data[i][0]+y][data[i][1]+x] = 1;
         }
-        delete block;
+        block = null;
         block=new obj_falling();
     }
 }
@@ -215,7 +215,7 @@ function initialize()
 
     //listen to the keyboard
     document.addEventListener("keydown", block.rotate);
-    document.addEventListener("keydown", bolck.move);
+    document.addEventListener("keydown", block.move);
 
     setInterval(function(){main();}, 100);
 }
