@@ -2,12 +2,24 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContsxt("2d");
 
-//type
-//1 ****    2 **    3 **   4 **
-//            **      *       *
-//                    *       *
+//type+shape
+//1 ****    2 **    3 ***   4 ***
+//            **        *     *
+//                           
 //5 **      6 **    7  *
 //   **      **       ***
+
+var Shape = 
+[
+    [],//type0 has no shape
+    [[-1,0],[0,0],[1,0],[2,0]],
+    [[0,0],[0,1],[1,0],[1,1]],
+    [[-1,0],[0,0],[1,0],[1,-1]],
+    [[-1,-1],[-1,0],[0,0],[1,0]],
+    [[-1,1],[0,1],[0,0],[1,0]],
+    [[-1,-1],[0,-1],[0,0],[1,0]],
+    [[-1,0],[0,0],[0,1],[1,0]]
+];
 
 var data=[[], [], [], []];
 var obj_falling = function()
@@ -63,17 +75,28 @@ var obj_falling = function()
 document.addEventListener("keydown", obj_falling.rotate(key));
 
 
-function translate(x,y,orig)//2-dimensional directly use(?)
+function translate(x,y,local)//2-dimensional directly transport(?)
 {
-    var tmp=[];
+    var global=[];
     
     for(let i=0; i<4; i++)
         {
-            tmp[i][0]=orig[i][0];
-            tmp[i][1]=orig[i][1];
+            global[i][0]=local[i][0]+x;
+            global[i][1]=local[i][1]+y;
         }
 
-    return tmp;
+    return global;
+}
+
+function checkCol(global)//return 0: cannot move
+{
+    for(let i=0; i<4; i++)
+    {
+        if(map[global[i][0]][global[i][1]] == 1)//There already exists a block
+        {return 0;}
+    }
+
+    return 1;
 }
 
 function drawSquare(x,y)
