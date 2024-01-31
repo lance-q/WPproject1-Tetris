@@ -1,6 +1,8 @@
 //100*200
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContsxt("2d");
+const delay=5;
+var photogram=0;
 
 //type(angle=0)
 //1 ****    2 **    3 **   4 **
@@ -10,6 +12,18 @@ const ctx = canvas.getContsxt("2d");
 //5 **      6 **    7  *
 //   **      **       ***
 
+//2-d board
+var row = 20;
+var col = 10;
+var board = [];
+for (var i = 0; i < row; i++) {
+  board[i] = [];
+  for (var j = 0; j < col; j++) {
+    board[i][j] = 0;
+  }
+}
+
+//shape
 var Shape = 
 [
     [],//type0 has no shape
@@ -45,7 +59,8 @@ var obj_falling = function()
 
     this.fall = function()
     {
-        this.y+=10;
+        if(photogram == delay)
+        {photogram=0; this.y++;}
     }
 
     this.rotate = function(key)
@@ -78,13 +93,22 @@ var obj_falling = function()
     }
 }
 
-//keydown
-document.addEventListener("keydown", obj_falling.rotate);
+function translate(x,y,local)//2-dimensional directly transport(?)
+{
+    var global=[];
+    
+    for(let i=0; i<4; i++)
+        {
+            global[i][0]=local[i][0]+x;
+            global[i][1]=local[i][1]+y;
+        }
 
-//collision detect
-function checkCol(orig)
+    return global;
+}
+
+function checkCol(local)
 {   
-    next=translate(x,y,orig);
+    var next=translate(x,y,local);
     var flag=1,i=0;
     do{
         var sx=next[i][0],sy=next[i][1];
@@ -98,30 +122,8 @@ function checkCol(orig)
     return flag
 }
 
-//translate
-function translate(x,y,orig)//1-dimensional directly use(?)
-{
-    var tmp=[];
-    
-    for(let i=0; i<4; i++)
-        {
-            tmp[i][0]=orig[i][0]+x;
-            tmp[i][1]=orig[i][1]+y;
-        }
-
-    return tmp;
-}
-
-//2-d board
-var row = 20;
-var col = 10;
-var board = [];
-for (var i = 0; i < row; i++) {
-  board[i] = [];
-  for (var j = 0; j < col; j++) {
-    board[i][j] = 0;
-  }
-}
+//keydown
+document.addEventListener("keydown", obj_falling.rotate);
 
 //clear line
 function clearline(i) {
@@ -134,7 +136,6 @@ function clearline(i) {
         }
     }
 }
-
 function checkline() {
     for (let i = 0; i < 20; i++) {
         let fullLine = true;
@@ -194,6 +195,24 @@ function drawAll(){
     obj_falling. draw(); 
 }
 
-function iffail(){
+function initialize()
+{
+    //create a block
+    block=new obj_falling();
 
+    //listen to the keyboard
+    document.addEventListener("keydown", block.rotate);
+    document.addEventListener("keydown", bolck.move);
+
+    setInterval(function(){main();}, 100);
+}
+
+function main()
+{
+    drawAll();
+    
+    //if a block falls to the bottom, create a new one
+
+    
+    photogram++;
 }
