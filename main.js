@@ -71,7 +71,7 @@ var obj_falling = function()
 document.addEventListener("keydown", obj_falling.rotate(key));
 
 //collision detect
-function checkCol(x,y,orig)
+function checkCol(orig)
 {   
     next=translate(x,y,orig);
     var flag=1,i=0;
