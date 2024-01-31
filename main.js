@@ -94,8 +94,8 @@ function translate(x,y,orig)//2-dimensional directly use(?)
     
     for(let i=0; i<4; i++)
         {
-            tmp[i][0]=orig[i][0];
-            tmp[i][1]=orig[i][1];
+            tmp[i][0]=orig[i][0]+x;
+            tmp[i][1]=orig[i][1]+y;
         }
 
     return tmp;
