@@ -122,9 +122,6 @@ function checkCol(local)
     return flag
 }
 
-//keydown
-document.addEventListener("keydown", obj_falling.rotate);
-
 //clear line
 function clearline(i) {
     for (let j = 0; j < 10; j++) {
