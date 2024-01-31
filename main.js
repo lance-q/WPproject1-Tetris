@@ -195,6 +195,22 @@ function drawAll(){
     obj_falling. draw(); 
 }
 
+function resetblock(){
+    let colFlag = false;
+    for(let i=0;i<4;i++){
+        if(board[data[i][0]+y+1][data[i][1]+x] == 1){
+            colFlag = true;
+        }
+    }
+    if(colFlag){
+        for(let i=0;i<4;i++){
+            board[data[i][0]+y][data[i][1]+x] = 1;
+        }
+        delete block;
+        block=new obj_falling();
+    }
+}
+
 function initialize()
 {
     //create a block
