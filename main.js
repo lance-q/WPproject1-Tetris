@@ -10,19 +10,15 @@ const ctx = canvas.getContsxt("2d");
 //   **      **       ***
 
 var data=[[], [], [], []];
-class obj_falling
+var obj_falling = function()
 {
-    constructor()
-    {
-        this.type=Math.floor(Math.random()*7)+1;
-        this.shape=Shape[this.type];
-        this.angle=0;
-        //this.color=Color[this.type];
-        this.x=3;
-        this.y=0;
-    }
+    this.x=3;
+    this.y=0;
+    this.type=Math.floor(Math.random()*7)+1;
+    this.shape=Shape[this.type];
+    //this.color=Color[this.type];
 
-    move(key)
+    this.move(key)
     {
         switch(key.keyCode)
         {
@@ -33,12 +29,12 @@ class obj_falling
         }
     }
 
-    fall()
+    this.fall()
     {
         y+=10;
     }
 
-    rotate(key)
+    this.rotate(key)
     {
         if(key.keyCode == 38)
         {
