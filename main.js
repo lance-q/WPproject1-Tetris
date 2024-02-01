@@ -231,7 +231,7 @@ function initialize() {
 
 function main(block) {
     drawAll(block);
-    
+    checkline();
     //if a block falls to the bottom, create a new one
     resetblock(block);
     
