@@ -3,19 +3,21 @@
 <head>
     <meta charset = "UTF-8">
     <meta name = "Tetrix" content = "Trial">
-    <title> Tetrix </title>
+    <title> Tetris </title>
     
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body onload = 'initialize();'>
+<body onload = 'drawMap();'>
     <div id = "bodybackground">
         <div class = "container">
             <canvas id = "canvas" width="300" height="600"></canvas>
         </div>
 
         <div class = "sidebar">
+            <div id="greetingMessage"></div>
             <h2> TETRIS </h2>
+            <button id = "start" onclick = "initialize();"> START </button>
 
             <div class = "scoreboard">
                 <h3> Score: 
@@ -36,10 +38,40 @@
             <image src="source/Tetris_logo.png" width="400" height="277.5"></image>
         </div>
 
+        <div id="audio">
+            <button id = "audio" onclick = "changeAudio()">
+                <image id = "audioimg" src="source/off.png" width="40" height="40"></image>
+            </button>
+        </div>
+
     </div>  
-    <audio controls autoplay loop>
-        <source src="source/tetris_8bit_theme.mp3">
-    </audio>
+    <script>
+        var audioState = 0;//0 is off, 1 is on
+        var sound = new Audio("source/tetris_8bit_theme.mp3");
+        sound.loop=true;
+        
+        function unmute()
+        {
+            var audio = document.getElementById('audioimg')
+            audioState = 1;
+            sound.play();
+            audio.src = "source/on.png";
+        }
+
+        function mute()
+        {
+            var audio = document.getElementById('audioimg')
+            audioState = 0;
+            sound.pause();
+            audio.src = "source/off.png";
+        }
+
+        function changeAudio()
+        {
+            if(audioState == 0) {unmute();}
+            else {mute();}
+        }
+    </script>
 </body>
 
 </html>
