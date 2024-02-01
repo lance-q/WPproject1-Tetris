@@ -16,6 +16,7 @@ var photogram = 0;
 var row = 20;
 var col = 10;
 var board = [];
+var board_color= [];
 //board initialization is moved into function"initialize" to reset the game
 
 //shape
@@ -30,6 +31,19 @@ var Shape =
         [[-1, -1], [0, -1], [0, 0], [1, 0]],
         [[-1, 0], [0, 0], [0, 1], [1, 0]]
     ];
+
+//color
+var Color =
+    [
+        "#000000",
+        "#FFADAD",
+        "#FFD6A5",
+        "#FDFFB6",
+        "#CAFFBF",
+        "#9BF6FF",
+        "#A0C4FF",
+        "#FFC6FF"
+    ]
 
 //class
 var data = [[], [], [], []];
@@ -47,7 +61,7 @@ var obj_falling = function () {
     this.draw = function () {
         let location = translate(this.x, this.y, data);
         for (let i = 0; i < 4; i++) {
-            drawSquare(location[i][0] * 30, location[i][1] * 30);
+            drawSquare(location[i][0] * 30, location[i][1] * 30, this.type);
         }
     }
 }
@@ -93,6 +107,7 @@ function clearline(i) {
         }
     }
 }
+
 function checkline() {
     for (let i = 0; i < 20; i++) {
         let fullLine = true;
@@ -110,11 +125,13 @@ function checkline() {
 
 //draw 小函数
 //单个格子
-function drawSquare(x, y) {
+function drawSquare(x, y, colorType) {
     ctx.beginPath();
+    ctx.fillStyle = Color[colorType];
     ctx.fillRect(x + 2, y + 2, 26, 26);
     ctx.stroke();
 }
+
 function drawMap() {
     ctx.beginPath();
     for (let i = 0; i <= 300; i += 30) {
@@ -134,7 +151,7 @@ function drawBoard() {
     for (var i = 0; i < col; i++) {
         for (var j = 0; j < row; j++) {
             if (board[i][j] != 0) {
-                drawSquare(i * 30, j * 30);
+                drawSquare(i * 30, j * 30, board_color[i][j]);
             }
         }
     }
@@ -160,7 +177,9 @@ function resetblock(block) {
     if (colFlag) {
         for (let i = 0; i < 4; i++) {
             board[data[i][0] + block.x][data[i][1] + block.y] = 1;
+            board_color[data[i][0] + block.x][data[i][1] + block.y] = block.type;
         }
+
         // delete block;
         block.x = 4;
         block.y = -1;
@@ -193,12 +212,14 @@ function restart()
     }
 }
 
-function initialize() {
+function initialize()
+{
     //create a block
     block = new obj_falling();
 
     for (let i = 0; i < col; i++) {
         board[i] = [];
+        board_color[i] = [];
         for (let j = 0; j < row; j++) {
             board[i][j] = 0;
         }
