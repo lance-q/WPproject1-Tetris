@@ -245,8 +245,16 @@ function initialize() {
 
                 if (checkCol(block,tmp) == 1) { block.x += 1; } break;
         }
-    }
-);
+    });
+
+    //speed up
+    document.addEventListener("keydown", function(key){
+        if (key.keyCode == 40)
+        {
+            photogram = delay;
+        }
+    })
+
 
     drawAll(block);
 
