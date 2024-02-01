@@ -50,43 +50,40 @@ var obj_falling = function () {
     }
 
     this.draw = function () {
-        let location = translate(this.x, this.y);
+        let location = translate(this.x, this.y, data);
         for (let i = 0; i < 4; i++) {
             drawSquare(location[i][0] * 10, location[i][1] * 10);
         }
     }
 }
 
-function translate(x, y)//2-dimensional directly transport(?)
+function translate(x, y, local)//2-dimensional directly transport(?)
 {
-    var global = [];
-
+    var global = [[], [], [], []];
     for (let i = 0; i < 4; i++) {
-        global[i] = [];
-        global[i][0] = data[i][0] + x;
-        global[i][1] = data[i][1] + y;
+    //global[i] = [];
+        global[i][0] = local[i][0] + x;
+        global[i][1] = local[i][1] + y;
     }
 
     return global;
 }
 
-function checkCol(tmp) {
-    var next = [[],[],[],[]];
-    for(let i=0; i<4; i++)
-    {
-        next[i]=translate(tmp[i][0], tmp[i][1]);
-    }
-
+function checkCol(block,local) {
+    var global=translate(block.x,block.y,local);
     var flag = 1, i = 0;
     do {
-        var sx = next[i][0], sy = next[i][1];
+        var sx = global[i][0], sy = global[i][1];
         if (board[sx][sy] == 1) {
             flag = 0;
         }
+        else if(sx > col || sx < 0)
+        {
+            flag = 0;
+        }
         i++;
-
     } while (flag == 1 && i < 4)
-    return flag
+    return flag;
 }
 
 
@@ -149,7 +146,7 @@ function drawBoard() {
 }
 
 function drawAll(block) {
-    ctx.clearRect(0, 0, 100, 200); // Clear the canvas
+    ctx.clearRect(0, 0, 300, 600); // Clear the canvas
     drawMap();
     drawBoard();
     //draw (falling) object
@@ -173,7 +170,7 @@ function resetblock(block) {
         block.x = 4;
         block.y = -1;
         block.type = Math.floor(Math.random() * 7) + 1;
-        block.data = Shape[block.type];
+        data = Shape[block.type];
     }
 }
 
@@ -193,7 +190,7 @@ function initialize() {
                 tmp[i][1] = -data[i][0];
             }
 
-            if (checkCol(tmp) == 1) {
+            if (checkCol(block,tmp) == 1) {
                 for (let i = 0; i < 4; i++) {
                     data[i][0] = tmp[i][0];
                     data[i][1] = tmp[i][1];
@@ -207,9 +204,21 @@ function initialize() {
         switch (key.keyCode)
         {
             case 37:
-                if (this.x > 0) { this.x -= 10; } break;
+                var tmp = [[], [], [], []];
+                for (let i = 0; i < 4; i++) {
+                    tmp[i][0] = data[i][0] - 1;
+                    tmp[i][1] = data[i][1];
+                }
+                
+                if (checkCol(block,tmp) == 1) { block.x -= 1; } break;
             case 39:
-                if (this.x < 90) { this.x += 10; } break;
+                var tmp = [[], [], [], []];
+                for (let i = 0; i < 4; i++) {
+                    tmp[i][0] = data[i][0] + 1;
+                    tmp[i][1] = data[i][1];
+                }
+
+                if (checkCol(block,tmp) == 1) { block.x += 1; } break;
         }
     }
 );
@@ -222,11 +231,11 @@ function initialize() {
 
 function main(block) {
     drawAll(block);
-    resetblock(block);
+    
     //if a block falls to the bottom, create a new one
-
+    resetblock(block);
+    
     block.fall();
     photogram++;
 }
 
-//console.log(block);
