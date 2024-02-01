@@ -200,9 +200,9 @@ function initialize() {
         switch (key.keyCode)
         {
             case 37:
-                if (block.x > 0) { block.x -= 10; } break;
+                if (block.x > 0) { block.x -= 1; } break;
             case 39:
-                if (block.x < 90) { block.x += 10; } break;
+                if (block.x < 9) { block.x += 1; } break;
         }
     }
 );
