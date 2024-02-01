@@ -2,6 +2,8 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 var score = document.getElementById('score');
+var TIMER = document.getElementById('timer');
+var time=0;
 const delay = 5;
 var photogram = 0;
 var sco=0;
@@ -275,7 +277,8 @@ function main(block) {
         bonus=-1;
     }
     score.innerHTML=sco;
-
+    TIMER.innerHTML = time.toFixed(2);
+    time+=0.2;
     //if a block falls to the bottom, create a new one
     resetblock(block);
     
