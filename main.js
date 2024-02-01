@@ -1,8 +1,11 @@
 //100*200
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
+var score = document.getElementById('score');
 const delay = 5;
 var photogram = 0;
+var sco=0;
+var bonus=-1;
 
 //type(angle=0)
 //1 ****    2 **    3 **   4 **
@@ -16,12 +19,7 @@ var photogram = 0;
 var row = 20;
 var col = 10;
 var board = [];
-for (var i = 0; i < col; i++) {
-    board[i] = [];
-    for (var j = 0; j < row; j++) {
-        board[i][j] = 0;
-    }
-}
+//board initialization is moved into function"initialize" to reset the game
 
 //shape
 var Shape =
@@ -52,7 +50,7 @@ var obj_falling = function () {
     this.draw = function () {
         let location = translate(this.x, this.y, data);
         for (let i = 0; i < 4; i++) {
-            drawSquare(location[i][0] * 10, location[i][1] * 10);
+            drawSquare(location[i][0] * 30, location[i][1] * 30);
         }
     }
 }
@@ -109,6 +107,7 @@ function checkline() {
         }
         if (fullLine) {
             clearline(i);
+            bonus++;
         }
     }
 }
@@ -117,20 +116,20 @@ function checkline() {
 //单个格子
 function drawSquare(x, y) {
     ctx.beginPath();
-    ctx.fillRect(x + 1, y + 1, 8, 8);
+    ctx.fillRect(x + 2, y + 2, 26, 26);
     ctx.stroke();
 }
 function drawMap() {
     ctx.beginPath();
-    for (let i = 0; i <= 100; i += 10) {
+    for (let i = 0; i <= 300; i += 30) {
         ctx.moveTo(i, 0);
-        ctx.lineTo(i, 200);
+        ctx.lineTo(i, 600);
         ctx.stroke();
     }
 
-    for (let i = 0; i <= 200; i += 10) {
+    for (let i = 0; i <= 600; i += 30) {
         ctx.moveTo(0, i);
-        ctx.lineTo(100, i);
+        ctx.lineTo(300, i);
         ctx.stroke();
     }
 }
@@ -139,7 +138,7 @@ function drawBoard() {
     for (var i = 0; i < col; i++) {
         for (var j = 0; j < row; j++) {
             if (board[i][j] != 0) {
-                drawSquare(i * 10, j * 10);
+                drawSquare(i * 30, j * 30);
             }
         }
     }
@@ -174,10 +173,40 @@ function resetblock(block) {
     }
 }
 
+function fail()
+{
+    for(let i=0; i<col; i++)
+    {
+        if(board[i][0] == 1)
+        {
+            alert("GAME OVER");
+            restart();
+        }
+    }
+}
+
+function restart()
+{
+    block = new obj_falling();
+
+    for (let i = 0; i < col; i++) {
+        board[i] = [];
+        for (let j = 0; j < row; j++) {
+            board[i][j] = 0;
+        }
+    }
+}
+
 function initialize() {
     //create a block
     block = new obj_falling();
-    console.log(block);
+
+    for (let i = 0; i < col; i++) {
+        board[i] = [];
+        for (let j = 0; j < row; j++) {
+            board[i][j] = 0;
+        }
+    }
 
     //listen to the keyboard
     //rotate
@@ -220,8 +249,16 @@ function initialize() {
 
                 if (checkCol(block,tmp) == 1) { block.x += 1; } break;
         }
-    }
-);
+    });
+
+    //speed up
+    document.addEventListener("keydown", function(key){
+        if (key.keyCode == 40)
+        {
+            photogram = delay;
+        }
+    })
+
 
     drawAll(block);
 
@@ -231,11 +268,17 @@ function initialize() {
 
 function main(block) {
     drawAll(block);
+    fail();
     checkline();
+    if(bonus!=-1){
+        sco=sco+10*Math.pow(2,bonus);
+        bonus=-1;
+    }
+    score.innerHTML=sco;
+
     //if a block falls to the bottom, create a new one
     resetblock(block);
     
     block.fall();
     photogram++;
 }
-
