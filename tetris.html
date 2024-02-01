@@ -38,7 +38,7 @@
             
             <button id = "audio" onclick = "changeAudio()">
                 <image id = "audioimg" src="source/off.png" width="40" height="40"></image>
-            </botton>
+            </button>
 
             <script>
                 var audioState = 0;//0 is off, 1 is on
@@ -46,7 +46,7 @@
                 
                 function unmute()
                 {
-                    var audio = documnet.getElementById('auidioimg')
+                    var audio = document.getElementById('audioimg')
                     audioState = 1;
                     sound.pause();
                     audio.src = "source/on.png";
@@ -54,7 +54,7 @@
 
                 function mute()
                 {
-                    var audio = documnet.getElementById('audioimg')
+                    var audio = document.getElementById('audioimg')
                     audioState = 0;
                     sound.play();
                     audio.src = "source/off.png";
