@@ -29,20 +29,48 @@
             <p id = "timer">
                 <timer id = "timer">00:00</timer>
             </p>
-            <button id = "sound" onclick="startAudio();"> Sound </button>
-
 
             <script type = "text/javascript" src = "main.js"></script>
         </div>
 
         <div class = "leftbar">
             <image src="source/Tetris_logo.png" width="400" height="277.5"></image>
+            
+            <button id = "audio" onclick = "changeAudio()">
+                <image id = "audioimg" src="source/off.png" width="40" height="40"></image>
+            </botton>
+
+            <script>
+                var audioState = 0;//0 is off, 1 is on
+                var sound = new Audio("source/tetris_8bit_theme.mp3")
+                
+                function unmute()
+                {
+                    var audio = documnet.getElementById('auidioimg')
+                    audioState = 1;
+                    sound.pause();
+                    audio.src = "source/on.png";
+                }
+
+                function mute()
+                {
+                    var audio = documnet.getElementById('audioimg')
+                    audioState = 0;
+                    sound.play();
+                    audio.src = "source/off.png";
+                }
+
+                function changeAudio()
+                {
+                    if(audioState == 0) {unmute();}
+                    else {mute();}
+                }
+            </script>
+
         </div>
 
     </div>  
-    <audio id="myAudio" controls autoplay loop>
-        <source src="source/tetris_8bit_theme.mp3">
-    </audio>
+    
 </body>
 
 </html>
