@@ -242,6 +242,8 @@ function initialize()
         }
     }
 
+    gameInterval = setInterval(function(){main(block);}, 100);
+
     //listen to the keyboard
     //rotate
     document.addEventListener("keydown", function(key){
@@ -297,23 +299,20 @@ function initialize()
     document.addEventListener("keydown", function(key){
         if(key.keyCode == 32)//32 is space
         {
-            if(isPause == 1) {isPause = 0;}
-            else {isPause = 1;}
-
-            if(isPause == 0)
+            if(isPause == 1)
             {
+                isPause = 0;
                 gameInterval = setInterval(function(){main(block);}, 100);
             }
             else
             {
+                isPause = 1;
                 clearInterval(gameInterval);
             }
         }
     });
 
     drawAll(block);
-
-    
 
 }
 
