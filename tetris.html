@@ -3,7 +3,7 @@
 <head>
     <meta charset = "UTF-8">
     <meta name = "Tetrix" content = "Trial">
-    <title> Tetrix </title>
+    <title> Tetris </title>
     
     <link rel="stylesheet" href="style.css">
 </head>
@@ -16,7 +16,7 @@
 
         <div class = "sidebar">
             <h2> TETRIS </h2>
-            <button id = "start" onclick = "initialize();"> Start </button>
+            <button id = "start" onclick = "initialize();"> START </button>
 
             <div class = "scoreboard">
                 <h3> Score: 
@@ -48,7 +48,7 @@
                 {
                     var audio = document.getElementById('audioimg')
                     audioState = 1;
-                    sound.pause();
+                    sound.play();
                     audio.src = "source/on.png";
                 }
 
@@ -56,7 +56,7 @@
                 {
                     var audio = document.getElementById('audioimg')
                     audioState = 0;
-                    sound.play();
+                    sound.pause();
                     audio.src = "source/off.png";
                 }
 
