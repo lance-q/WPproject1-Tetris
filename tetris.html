@@ -1,0 +1,33 @@
+<html>
+
+<head>
+    <meta charset = "UTF-8">
+    <meta name = "Tetris" content = "Trial">
+    <title> Tetris </title>
+</head>
+
+<body onload = 'initialize();'>
+    <div id = "bodybackground">
+        <div class = "container">
+            <canvas id = "canvas" width = "300" height = "600"></canvas>
+        </div>
+
+        <div class = "sidebar">
+            <h2> TETRIX </h2>
+
+            <div class = "scoreboard">
+                <h3> Score: 
+                    <score id = "score">0</score>
+                </h3>
+            </div>
+
+            <p> Duration: 
+                <timer id = "timer">00:00</timer>
+            </p>
+
+            <script type = "text/javascript" src = "main.js"></script>
+        </div>
+    </div>  
+</body>
+
+</html>
