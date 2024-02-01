@@ -77,6 +77,10 @@ function checkCol(block,local) {
         if (board[sx][sy] == 1) {
             flag = 0;
         }
+        else if(sx > col || sx < 0)
+        {
+            flag = 0;
+        }
         i++;
     } while (flag == 1 && i < 4)
     return flag;
@@ -142,7 +146,7 @@ function drawBoard() {
 }
 
 function drawAll(block) {
-    ctx.clearRect(0, 0, 100, 200); // Clear the canvas
+    ctx.clearRect(0, 0, 300, 600); // Clear the canvas
     drawMap();
     drawBoard();
     //draw (falling) object
@@ -200,9 +204,21 @@ function initialize() {
         switch (key.keyCode)
         {
             case 37:
-                if (block.x > 0) { block.x -= 1; } break;
+                var tmp = [[], [], [], []];
+                for (let i = 0; i < 4; i++) {
+                    tmp[i][0] = data[i][0] - 1;
+                    tmp[i][1] = data[i][1];
+                }
+                
+                if (checkCol(block,tmp) == 1) { block.x -= 1; } break;
             case 39:
-                if (block.x < 9) { block.x += 1; } break;
+                var tmp = [[], [], [], []];
+                for (let i = 0; i < 4; i++) {
+                    tmp[i][0] = data[i][0] + 1;
+                    tmp[i][1] = data[i][1];
+                }
+
+                if (checkCol(block,tmp) == 1) { block.x += 1; } break;
         }
     }
 );
@@ -215,8 +231,10 @@ function initialize() {
 
 function main(block) {
     drawAll(block);
-    resetblock(block);
+
     //if a block falls to the bottom, create a new one
+    resetblock(block);
+    
     block.fall();
     photogram++;
 }
