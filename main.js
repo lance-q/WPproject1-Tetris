@@ -166,7 +166,7 @@ function resetblock(block) {
         block.x = 4;
         block.y = -1;
         block.type = Math.floor(Math.random() * 7) + 1;
-        block.data = Shape[block.type];
+        data = Shape[block.type];
     }
 }
 
