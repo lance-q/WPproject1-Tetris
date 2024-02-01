@@ -3,11 +3,14 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 var score = document.getElementById('score');
 var TIMER = document.getElementById('timer');
-var time=0;
+var time = 0;
 const delay = 5;
 var photogram = 0;
-var sco=0;
-var bonus=-1;
+var sco = 0;
+var bonus = -1;
+var isStart = 0;
+var isPause = 0;
+var gameInterval;
 
 //type(angle=0)
 //1 ****    2 **    3 **   4 **
@@ -88,7 +91,8 @@ function checkCol(block,local) {
     var flag = 1, i = 0;
     do {
         var sx = global[i][0], sy = global[i][1];
-        if (board[sx][sy] == 1) {
+        if (board[sx][sy] == 1)
+        {
             flag = 0;
         }
         else if(sx > col || sx < 0)
@@ -175,7 +179,7 @@ function resetblock(block) {
     let colFlag = false;
 
     for (let i = 0; i < 4; i++) {
-        if ((board[data[i][0] + block.x][data[i][1] + block.y + 1] == 1) || data[i][1] + block.y + 1 == row) {
+        if (photogram >=4 && ((board[data[i][0] + block.x][data[i][1] + block.y + 1] == 1) || data[i][1] + block.y + 1 == row)) {
             colFlag = true;
         }
     }
@@ -218,6 +222,11 @@ function restart()
             board[i][j] = 0;
         }
     }
+}
+
+function startGame()
+{
+    if(isStart == 0) {isStart = 1; initialize();}
 }
 
 function initialize()
@@ -284,10 +293,27 @@ function initialize()
         }
     })
 
+    //pause
+    document.addEventListener("keydown", function(key){
+        if(key.keyCode == 32)//32 is space
+        {
+            if(isPause == 1) {isPause = 0;}
+            else {isPause = 1;}
+
+            if(isPause == 0)
+            {
+                gameInterval = setInterval(function(){main(block);}, 100);
+            }
+            else
+            {
+                clearInterval(gameInterval);
+            }
+        }
+    });
 
     drawAll(block);
 
-    setInterval(function () { main(block); }, 100);
+    
 
 }
 
@@ -310,3 +336,16 @@ function main(block) {
     block.fall();
     photogram++;
 }
+
+
+function askForNameAndGreet() {
+    var name = prompt("Please Enter Your Name:");
+
+    if (name === null || name.trim() === "") {
+    alert("Hello!");
+    } else {
+    var greetingMessage = document.getElementById('greetingMessage');
+    greetingMessage.textContent = "Hello! " + name + "! This is Tetris!";
+    }
+}
+askForNameAndGreet();
