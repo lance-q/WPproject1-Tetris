@@ -1,16 +1,21 @@
 //100*200
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
+const preview = document.getElementById("preview");
+const ctx_preview = preview.getContext("2d");
+
 var score = document.getElementById('score');
 var TIMER = document.getElementById('timer');
 var time = 0;
-const delay = 5;
-var photogram = 0;
 var sco = 0;
 var bonus = -1;
+
 var isStart = 0;
 var isPause = 0;
 var gameInterval;
+const delay = 5;
+var photogram = 0;
+var nextBlock;
 
 //type(angle=0)
 //1 ****    2 **    3 **   4 **
@@ -24,7 +29,7 @@ var gameInterval;
 var row = 20;
 var col = 10;
 var board = [];
-var board_color= [];
+var board_color = [];
 //board initialization is moved into function"initialize" to reset the game
 
 //shape
@@ -37,7 +42,7 @@ var Shape =
         [[-1, -1], [-1, 0], [0, 0], [1, 0]],
         [[-1, 1], [0, 1], [0, 0], [1, 0]],
         [[-1, -1], [0, -1], [0, 0], [1, 0]],
-        [[-1, 0], [0, 0], [0, 1], [1, 0]]
+        [[-1, 0], [0, 0], [0, -1], [1, 0]]
     ];
 
 //color
@@ -133,13 +138,19 @@ function checkline() {
     }
 }
 
-//draw 小函数
-//单个格子
+//draw a single square
 function drawSquare(x, y, colorType) {
     ctx.beginPath();
     ctx.fillStyle = Color[colorType];
     ctx.fillRect(x + 2, y + 2, 26, 26);
     ctx.stroke();
+}
+
+function drawSquare_preview(x, y, colorType) {
+    ctx_preview.beginPath();
+    ctx_preview.fillStyle = Color[colorType];
+    ctx_preview.fillRect(x + 2, y + 2, 26, 26);
+    ctx_preview.stroke();
 }
 
 function drawMap() {
@@ -167,10 +178,21 @@ function drawBoard() {
     }
 }
 
+function drawNext() {
+    let tmp = translate(1, 1, Shape[nextBlock]);
+    
+    for(let i=0; i<4; i++)
+    {
+        drawSquare_preview(tmp[i][0] * 30, tmp[i][1] * 30, nextBlock);
+    }
+}
+
 function drawAll(block) {
     ctx.clearRect(0, 0, 300, 600); // Clear the canvas
+    ctx_preview.clearRect(0, 0, 120, 120);
     drawMap();
     drawBoard();
+    drawNext();
     //draw (falling) object
     block.draw();
 }
@@ -193,8 +215,10 @@ function resetblock(block) {
         // delete block;
         block.x = 4;
         block.y = -1;
-        block.type = Math.floor(Math.random() * 7) + 1;
+        block.type = nextBlock;
         data = Shape[block.type];
+
+        nextBlock = Math.floor(Math.random() * 7) + 1;
     }
 }
 
@@ -233,6 +257,7 @@ function initialize()
 {
     //create a block
     block = new obj_falling();
+    nextBlock = Math.floor(Math.random() * 7) + 1;
 
     for (let i = 0; i < col; i++) {
         board[i] = [];
