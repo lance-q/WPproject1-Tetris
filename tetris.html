@@ -2,20 +2,21 @@
 
 <head>
     <meta charset = "UTF-8">
-    <meta name = "Tetris" content = "Trial">
-    <title> Tetris </title>
-        
+    <meta name = "Tetrix" content = "Trial">
+    <title> Tetrix </title>
+    
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body onload = 'initialize();'>
+<body onload = 'drawMap();'>
     <div id = "bodybackground">
         <div class = "container">
-            <canvas id = "canvas" width = "300" height = "600"></canvas>
+            <canvas id = "canvas" width="300" height="600"></canvas>
         </div>
 
         <div class = "sidebar">
             <h2> TETRIS </h2>
+            <button id = "start" onclick = "initialize();"> Start </button>
 
             <div class = "scoreboard">
                 <h3> Score: 
@@ -23,21 +24,25 @@
                 </h3>
             </div>
 
-            <p> Duration: 
+            <h4> Duration: </h4>
+
+            <p id = "timer">
                 <timer id = "timer">00:00</timer>
             </p>
+            <button id = "sound" onclick="startAudio();"> Sound </button>
+
 
             <script type = "text/javascript" src = "main.js"></script>
         </div>
-        
+
         <div class = "leftbar">
             <image src="source/Tetris_logo.png" width="400" height="277.5"></image>
         </div>
 
     </div>  
-    <audio controls autoplay loop>
+    <audio id="myAudio" controls autoplay loop>
         <source src="source/tetris_8bit_theme.mp3">
-    </audio> 
+    </audio>
 </body>
 
 </html>

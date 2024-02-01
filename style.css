@@ -1,6 +1,7 @@
 body{
 	display: block;
 	margin: 0px;
+    overflow:hidden;
 }
 
 
@@ -18,8 +19,8 @@ div{
 	display: block;
 }
 .container{
-    margin-left: 750px;
-    margin-top: 300px;
+    margin-left: 700px;
+    margin-top: 100px;
     padding:15px, 5px;
     overflow: hidden;
     z-index: 0;
@@ -27,6 +28,8 @@ div{
     justify-content: space-around;
     flex-wrap: wrap;
     float:left;
+    height:600px;
+    width:300px;
 }
 
 .sidebar{
@@ -36,6 +39,8 @@ div{
     padding: 10px 10px;
     height: 850px;
     width: 400px;
+    font-size: larger;
+    font-family: "Times New Roman", Times, serif;
 }
 
 .leftbar{
