@@ -1,8 +1,13 @@
 //100*200
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
+var score = document.getElementById('score');
+var TIMER = document.getElementById('timer');
+var time=0;
 const delay = 5;
 var photogram = 0;
+var sco=0;
+var bonus=-1;
 
 //type(angle=0)
 //1 ****    2 **    3 **   4 **
@@ -119,6 +124,7 @@ function checkline() {
         }
         if (fullLine) {
             clearline(i);
+            bonus++;
         }
     }
 }
@@ -203,6 +209,8 @@ function fail()
 function restart()
 {
     block = new obj_falling();
+    time = 0;
+    sco = 0;
 
     for (let i = 0; i < col; i++) {
         board[i] = [];
@@ -287,6 +295,14 @@ function main(block) {
     drawAll(block);
     fail();
     checkline();
+
+    if(bonus!=-1){
+        sco=sco+10*Math.pow(2,bonus);
+        bonus=-1;
+    }
+    score.innerHTML=sco;
+    TIMER.innerHTML = time.toFixed(2);
+    time+=0.1;
 
     //if a block falls to the bottom, create a new one
     resetblock(block);
