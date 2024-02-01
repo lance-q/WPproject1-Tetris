@@ -29,6 +29,8 @@
             <p id = "timer">
                 <timer id = "timer">00:00</timer>
             </p>
+            <button id = "sound" onclick="startAudio();"> Sound </button>
+
 
             <script type = "text/javascript" src = "main.js"></script>
         </div>
@@ -38,7 +40,7 @@
         </div>
 
     </div>  
-    <audio controls autoplay loop>
+    <audio id="myAudio" controls autoplay loop>
         <source src="source/tetris_8bit_theme.mp3">
     </audio>
 </body>
