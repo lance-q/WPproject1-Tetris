@@ -16,9 +16,9 @@ var photogram = 0;
 var row = 20;
 var col = 10;
 var board = [];
-for (var i = 0; i < row; i++) {
+for (var i = 0; i < col; i++) {
     board[i] = [];
-    for (var j = 0; j < col; j++) {
+    for (var j = 0; j < row; j++) {
         board[i][j] = 0;
     }
 }
@@ -39,39 +39,14 @@ var Shape =
 //class
 var data = [[], [], [], []];
 var obj_falling = function () {
-    this.x = 3;
-    this.y = 0;
+    this.x = 4;
+    this.y = -1;
     this.type = Math.floor(Math.random() * 7) + 1;
     data = Shape[this.type];
     //this.color=Color[this.type];
 
-    this.move = function (key) {
-        switch (key.keyCode) {
-            case 37:
-                if (this.x > 0) { this.x -= 10; } break;
-            case 39:
-                if (this.x < 90) { this.x += 10; } break;
-        }
-    }
-
     this.fall = function () {
         if (photogram == delay) { photogram = 0; this.y++; }
-    }
-
-    this.rotate = function (key) {
-        if (key.keyCode == 38) {
-            var tmp = [[], [], [], []];
-            for (let i = 0; i < 4; i++) {
-                tmp[i][0] = data[i][1];
-                tmp[i][1] = -data[i][0];
-            }
-            if (checkCol(tmp) == 1) {
-                for (let i = 0; i < 4; i++) {
-                    data[i][0] = tmp[i][0];
-                    data[i][1] = tmp[i][1];
-                }
-            }
-        }
     }
 
     this.draw = function () {
@@ -82,44 +57,44 @@ var obj_falling = function () {
     }
 }
 
-function translate(x, y)//2-dimensional directly transport(?)
+function translate(x, y, local)//2-dimensional directly transport(?)
 {
-    var global = [];
-
+    var global = [[], [], [], []];
     for (let i = 0; i < 4; i++) {
-        global[i] = [];
-        global[i][0] = data[i][0] + x;
-        global[i][1] = data[i][1] + y;
+    //global[i] = [];
+        global[i][0] = local[i][0] + x;
+        global[i][1] = local[i][1] + y;
     }
 
     return global;
 }
 
-function checkCol(data) {
-    var next = translate(this.x, this.y, data);
+function checkCol(block,local) {
+    var global=translate(block.x,block.y,local);
     var flag = 1, i = 0;
     do {
-        var sx = next[i][0], sy = next[i][1];
+        var sx = global[i][0], sy = global[i][1];
         if (board[sx][sy] == 1) {
             flag = 0;
         }
+        else if(sx > col || sx < 0)
+        {
+            flag = 0;
+        }
         i++;
-
     } while (flag == 1 && i < 4)
-    return flag
+    return flag;
 }
 
-//keydown
-document.addEventListener("keydown", obj_falling.rotate);
 
 //clear line
 function clearline(i) {
     for (let j = 0; j < 10; j++) {
-        board[i][j] = 0;
+        board[j][i] = 0;
     }
     for (let j = i; j > 0; j--) {
         for (let k = 0; k < 10; k++) {
-            board[j][k] = board[j - 1][k];
+            board[k][j] = board[k][j-1];
         }
     }
 }
@@ -127,7 +102,7 @@ function checkline() {
     for (let i = 0; i < 20; i++) {
         let fullLine = true;
         for (let j = 0; j < 10; j++) {
-            if (board[i][j] == 0) {
+            if (board[j][i] == 0) {
                 fullLine = false;
                 break;
             }
@@ -159,18 +134,19 @@ function drawMap() {
         ctx.stroke();
     }
 }
+
 function drawBoard() {
-    for (var i = 0; i < row; i++) {
-        for (var j = 0; j < col; j++) {
+    for (var i = 0; i < col; i++) {
+        for (var j = 0; j < row; j++) {
             if (board[i][j] != 0) {
-                drawSquare(j * 10, i * 10);
+                drawSquare(i * 10, j * 10);
             }
         }
     }
 }
 
 function drawAll(block) {
-    ctx.clearRect(0, 0, 100, 200); // Clear the canvas
+    ctx.clearRect(0, 0, 300, 600); // Clear the canvas
     drawMap();
     drawBoard();
     //draw (falling) object
@@ -181,17 +157,20 @@ function resetblock(block) {
     let colFlag = false;
 
     for (let i = 0; i < 4; i++) {
-        if (board[data[i][0] + block.y + 1][data[i][1] + block.x] == 1) {
+        if ((board[data[i][0] + block.x][data[i][1] + block.y + 1] == 1) || data[i][1] + block.y + 1 == row) {
             colFlag = true;
         }
     }
 
-    if (colFlag || block.y + 1 == row - 1) {
+    if (colFlag) {
         for (let i = 0; i < 4; i++) {
-            board[data[i][0] + block.y][data[i][1] + block.x] = 1;
+            board[data[i][0] + block.x][data[i][1] + block.y] = 1;
         }
         // delete block;
-        block = new obj_falling();
+        block.x = 4;
+        block.y = -1;
+        block.type = Math.floor(Math.random() * 7) + 1;
+        data = Shape[block.type];
     }
 }
 
@@ -199,9 +178,50 @@ function initialize() {
     //create a block
     block = new obj_falling();
     console.log(block);
+
     //listen to the keyboard
-    document.addEventListener("keydown", obj_falling.rotate);
-    document.addEventListener("keydown", obj_falling.move);
+    //rotate
+    document.addEventListener("keydown", function(key){
+        if (key.keyCode == 38)
+        {
+            var tmp = [[], [], [], []];
+            for (let i = 0; i < 4; i++) {
+                tmp[i][0] = data[i][1];
+                tmp[i][1] = -data[i][0];
+            }
+
+            if (checkCol(block,tmp) == 1) {
+                for (let i = 0; i < 4; i++) {
+                    data[i][0] = tmp[i][0];
+                    data[i][1] = tmp[i][1];
+                }
+            }
+        }
+    });
+
+    //move
+    document.addEventListener("keydown", function(key){
+        switch (key.keyCode)
+        {
+            case 37:
+                var tmp = [[], [], [], []];
+                for (let i = 0; i < 4; i++) {
+                    tmp[i][0] = data[i][0] - 1;
+                    tmp[i][1] = data[i][1];
+                }
+                
+                if (checkCol(block,tmp) == 1) { block.x -= 1; } break;
+            case 39:
+                var tmp = [[], [], [], []];
+                for (let i = 0; i < 4; i++) {
+                    tmp[i][0] = data[i][0] + 1;
+                    tmp[i][1] = data[i][1];
+                }
+
+                if (checkCol(block,tmp) == 1) { block.x += 1; } break;
+        }
+    }
+);
 
     drawAll(block);
 
@@ -211,11 +231,11 @@ function initialize() {
 
 function main(block) {
     drawAll(block);
-    resetblock(block);
+    
     //if a block falls to the bottom, create a new one
-
-
+    resetblock(block);
+    
+    block.fall();
     photogram++;
 }
 
-//console.log(block);
