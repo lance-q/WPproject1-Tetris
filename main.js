@@ -1,13 +1,21 @@
 //100*200
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
+const preview = document.getElementById("preview");
+const ctx_preview = preview.getContext("2d");
+
 var score = document.getElementById('score');
 var TIMER = document.getElementById('timer');
-var time=0;
-const delay = 5;
+var time = 0;
+var sco = 0;
+var bonus = -1;
+var FPS = 100;
+var isStart = 0;
+var isPause = 0;
+var gameInterval;
+var delay = 50;
 var photogram = 0;
-var sco=0;
-var bonus=-1;
+var nextBlock;
 
 //type(angle=0)
 //1 ****    2 **    3 **   4 **
@@ -21,7 +29,7 @@ var bonus=-1;
 var row = 20;
 var col = 10;
 var board = [];
-var board_color= [];
+var board_color = [];
 //board initialization is moved into function"initialize" to reset the game
 
 //shape
@@ -29,12 +37,12 @@ var Shape =
     [
         [],//type0 has no shape
         [[-1, 0], [0, 0], [1, 0], [2, 0]],
-        [[0, 0], [0, 1], [1, 0], [1, 1]],
+        [[0, -1], [1, -1], [1, 0], [0, 0]],
         [[-1, 0], [0, 0], [1, 0], [1, -1]],
         [[-1, -1], [-1, 0], [0, 0], [1, 0]],
-        [[-1, 1], [0, 1], [0, 0], [1, 0]],
         [[-1, -1], [0, -1], [0, 0], [1, 0]],
-        [[-1, 0], [0, 0], [0, 1], [1, 0]]
+        [[-1, 0], [0, 0], [0, -1], [1, -1]],
+        [[-1, 0], [0, 0], [0, -1], [1, 0]]
     ];
 
 //color
@@ -60,7 +68,7 @@ var obj_falling = function () {
     //this.color=Color[this.type];
 
     this.fall = function () {
-        if (photogram == delay) { photogram = 0; this.y++; }
+        if (photogram >= delay) { photogram = 0; this.y++; }
     }
 
     this.draw = function () {
@@ -75,7 +83,7 @@ function translate(x, y, local)//2-dimensional directly transport(?)
 {
     var global = [[], [], [], []];
     for (let i = 0; i < 4; i++) {
-    //global[i] = [];
+        //global[i] = [];
         global[i][0] = local[i][0] + x;
         global[i][1] = local[i][1] + y;
     }
@@ -83,16 +91,15 @@ function translate(x, y, local)//2-dimensional directly transport(?)
     return global;
 }
 
-function checkCol(block,local) {
-    var global=translate(block.x,block.y,local);
+function checkCol(block, local) {
+    var global = translate(block.x, block.y, local);
     var flag = 1, i = 0;
     do {
         var sx = global[i][0], sy = global[i][1];
         if (board[sx][sy] == 1) {
             flag = 0;
         }
-        else if(sx > col || sx < 0)
-        {
+        else if (sx > col || sx < 0) {
             flag = 0;
         }
         i++;
@@ -108,7 +115,8 @@ function clearline(i) {
     }
     for (let j = i; j > 0; j--) {
         for (let k = 0; k < 10; k++) {
-            board[k][j] = board[k][j-1];
+            board[k][j] = board[k][j - 1];
+            board_color[k][j] = board_color[k][j - 1];
         }
     }
 }
@@ -129,13 +137,19 @@ function checkline() {
     }
 }
 
-//draw 小函数
-//单个格子
+//draw a single square
 function drawSquare(x, y, colorType) {
     ctx.beginPath();
     ctx.fillStyle = Color[colorType];
     ctx.fillRect(x + 2, y + 2, 26, 26);
     ctx.stroke();
+}
+
+function drawSquare_preview(x, y, colorType) {
+    ctx_preview.beginPath();
+    ctx_preview.fillStyle = Color[colorType];
+    ctx_preview.fillRect(x + 2, y + 2, 26, 26);
+    ctx_preview.stroke();
 }
 
 function drawMap() {
@@ -163,10 +177,32 @@ function drawBoard() {
     }
 }
 
+function drawNext() {
+    let Shape_preview =
+    [
+        [],//type0 has no shape
+        [[-1, 0], [0, 0], [1, 0], [2, 0]],
+        [[0, -1], [1, -1], [1, 0], [0, 0]],
+        [[0, -1], [1, -1], [1, 0], [1, 1]],
+        [[1, -1], [0, -1], [0, 0], [0, 1]],
+        [[-1, -1], [0, -1], [0, 0], [1, 0]],
+        [[-1, 0], [0, 0], [0, -1], [1, -1]],
+        [[-1, 0], [0, 0], [0, -1], [1, 0]]
+    ];
+    
+    let tmp = translate(1, 2, Shape_preview[nextBlock]);
+
+    for (let i = 0; i < 4; i++) {
+        drawSquare_preview(tmp[i][0] * 30, tmp[i][1] * 30, nextBlock);
+    }
+}
+
 function drawAll(block) {
     ctx.clearRect(0, 0, 300, 600); // Clear the canvas
+    ctx_preview.clearRect(0, 0, 120, 180);
     drawMap();
     drawBoard();
+    drawNext();
     //draw (falling) object
     block.draw();
 }
@@ -175,7 +211,7 @@ function resetblock(block) {
     let colFlag = false;
 
     for (let i = 0; i < 4; i++) {
-        if ((board[data[i][0] + block.x][data[i][1] + block.y + 1] == 1) || data[i][1] + block.y + 1 == row) {
+        if (photogram >= 4 && ((board[data[i][0] + block.x][data[i][1] + block.y + 1] == 1) || data[i][1] + block.y + 1 == row)) {
             colFlag = true;
         }
     }
@@ -189,25 +225,23 @@ function resetblock(block) {
         // delete block;
         block.x = 4;
         block.y = -1;
-        block.type = Math.floor(Math.random() * 7) + 1;
+        block.type = nextBlock;
         data = Shape[block.type];
+
+        nextBlock = Math.floor(Math.random() * 7) + 1;
     }
 }
 
-function fail()
-{
-    for(let i=0; i<col; i++)
-    {
-        if(board[i][0] == 1)
-        {
+function fail() {
+    for (let i = 0; i < col; i++) {
+        if (board[i][0] == 1) {
             alert("GAME OVER");
             restart();
         }
     }
 }
 
-function restart()
-{
+function restart() {
     block = new obj_falling();
     time = 0;
     sco = 0;
@@ -220,10 +254,14 @@ function restart()
     }
 }
 
-function initialize()
-{
+function startGame() {
+    if (isStart == 0) { isStart = 1; initialize(); }
+}
+
+function initialize() {
     //create a block
     block = new obj_falling();
+    nextBlock = Math.floor(Math.random() * 7) + 1;
 
     for (let i = 0; i < col; i++) {
         board[i] = [];
@@ -233,18 +271,19 @@ function initialize()
         }
     }
 
+    gameInterval = setInterval(function () { main(block); }, 1000 / FPS);
+
     //listen to the keyboard
     //rotate
-    document.addEventListener("keydown", function(key){
-        if (key.keyCode == 38)
-        {
+    document.addEventListener("keydown", function (key) {
+        if (key.keyCode == 38 && isPause == 0) {
             var tmp = [[], [], [], []];
             for (let i = 0; i < 4; i++) {
                 tmp[i][0] = data[i][1];
                 tmp[i][1] = -data[i][0];
             }
 
-            if (checkCol(block,tmp) == 1) {
+            if (checkCol(block, tmp) == 1) {
                 for (let i = 0; i < 4; i++) {
                     data[i][0] = tmp[i][0];
                     data[i][1] = tmp[i][1];
@@ -254,17 +293,18 @@ function initialize()
     });
 
     //move
-    document.addEventListener("keydown", function(key){
-        switch (key.keyCode)
+    document.addEventListener("keydown", function (key) {
+        if(isPause == 0)
         {
+            switch (key.keyCode) {
             case 37:
                 var tmp = [[], [], [], []];
                 for (let i = 0; i < 4; i++) {
                     tmp[i][0] = data[i][0] - 1;
                     tmp[i][1] = data[i][1];
                 }
-                
-                if (checkCol(block,tmp) == 1) { block.x -= 1; } break;
+
+                if (checkCol(block, tmp) == 1) { block.x -= 1; } break;
             case 39:
                 var tmp = [[], [], [], []];
                 for (let i = 0; i < 4; i++) {
@@ -272,41 +312,67 @@ function initialize()
                     tmp[i][1] = data[i][1];
                 }
 
-                if (checkCol(block,tmp) == 1) { block.x += 1; } break;
-        }
+                if (checkCol(block, tmp) == 1) { block.x += 1; } break;
+            }
+        }      
     });
 
     //speed up
-    document.addEventListener("keydown", function(key){
-        if (key.keyCode == 40)
-        {
+    document.addEventListener("keydown", function (key) {
+        if (key.keyCode == 40 && isPause == 0) {
             photogram = delay;
         }
     })
 
+    //pause
+    document.addEventListener("keydown", function (key) {
+        if (key.keyCode == 32)//32 is space
+        {
+            if (isPause == 1) {
+                isPause = 0;
+                gameInterval = setInterval(function () { main(block); }, 1000 / FPS);
+            }
+            else {
+                isPause = 1;
+                clearInterval(gameInterval);
+            }
+        }
+    });
 
     drawAll(block);
-
-    setInterval(function () { main(block); }, 100);
 
 }
 
 function main(block) {
+    //delay = delay - Math.floor(sco / 10);
+    //delay = 5 * Math.pow(0.8, Math.floor(sco / 50));
     drawAll(block);
     fail();
     checkline();
 
-    if(bonus!=-1){
-        sco=sco+10*Math.pow(2,bonus);
-        bonus=-1;
+    if (bonus != -1) {
+        sco = sco + 10 * Math.pow(3, bonus);
+        bonus = -1;
     }
-    score.innerHTML=sco;
+    score.innerHTML = sco;
     TIMER.innerHTML = time.toFixed(2);
-    time+=0.1;
+    time += 0.01;
 
     //if a block falls to the bottom, create a new one
     resetblock(block);
-    
     block.fall();
     photogram++;
 }
+
+
+function askForNameAndGreet() {
+    var name = prompt("Please Enter Your Name:");
+
+    if (name === null || name.trim() === "") {
+        alert("Hello!");
+    } else {
+        var greetingMessage = document.getElementById('greetingMessage');
+        greetingMessage.textContent = "Hello! " + name + "! This is Tetris!";
+    }
+}
+askForNameAndGreet();

@@ -1,52 +1,89 @@
-body{
-	display: block;
-	margin: 0px;
-    overflow:hidden;
+
+body, h1, h2, h3, h4, p, button, canvas, img {
+    margin: 0;
+    padding: 0;
 }
 
 
-#bodybackground{
-    width:100%;
-    height:100%;
-    background-color: rgba(0, 0, 255, 0.4);
-    background-repeat:no-repeat;
-    background-size:cover;
-    text-align: center;
-    background-attachment: fixed;
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden; /* 防止页面滚动 */
+    background-color: #000; 
 }
 
-div{
-	display: block;
-}
-.container{
-    margin-left: 700px;
-    margin-top: 100px;
-    padding:15px, 5px;
-    overflow: hidden;
-    z-index: 0;
+
+#bodybackground {
     display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    float:left;
-    height:600px;
-    width:300px;
+    justify-content: space-between;
+    height: 100vh; 
 }
 
-.sidebar{
-    float:right;
-    margin-right: 200px;
-    margin-top: 300px;
+
+.container {
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+}
+
+
+#canvas {
+    border: 2px solid #fff; 
+}
+
+
+.leftbar {
+    padding: 15px;
+    background-color: #333; 
+    height: 70vh; 
+    margin-top: 12vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; 
+    margin-right: 150px;
+}
+
+
+.sidebar {
+    background-color: #666;
+    padding: 15px;
+    text-align: center;
+    color: white;
+    font-size: 18px;
+    height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 12vh; 
+    margin-right: 0px;
+}
+
+
+.leftbar img {
+    max-width: 100%;
+    max-height: 50%; 
+}
+
+
+h2 {
+    color: #fff;
+    font-size: 24px;
+}
+
+
+button {
     padding: 10px 10px;
-    height: 850px;
-    width: 400px;
-    font-size: larger;
-    font-family: "Times New Roman", Times, serif;
+    background-color: transparent;
+    color: white;
+    border: 2px solid #ffffff; 
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
 }
 
-.leftbar{
-    float:inline-start;
-    margin-top:-500px;
-    margin-left:-100px;
-    height:555px;
-    width:800px;
+
+button:hover {
+    background-color: #ff90ba;
 }
