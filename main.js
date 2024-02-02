@@ -37,11 +37,11 @@ var Shape =
     [
         [],//type0 has no shape
         [[-1, 0], [0, 0], [1, 0], [2, 0]],
-        [[0, 0], [0, 1], [1, 0], [1, 1]],
+        [[0, -1], [1, -1], [1, 0], [0, 0]],
         [[-1, 0], [0, 0], [1, 0], [1, -1]],
         [[-1, -1], [-1, 0], [0, 0], [1, 0]],
-        [[-1, 1], [0, 1], [0, 0], [1, 0]],
         [[-1, -1], [0, -1], [0, 0], [1, 0]],
+        [[-1, 0], [0, 0], [0, -1], [1, -1]],
         [[-1, 0], [0, 0], [0, -1], [1, 0]]
     ];
 
@@ -181,15 +181,15 @@ function drawNext() {
     [
         [],//type0 has no shape
         [[-1, 0], [0, 0], [1, 0], [2, 0]],
-        [[0, 0], [0, 1], [1, 0], [1, 1]],
-        [[-1, 0], [0, 0], [1, 0], [1, -1]],
-        [[-1, -1], [-1, 0], [0, 0], [1, 0]],
-        [[-1, 1], [0, 1], [0, 0], [1, 0]],
+        [[0, -1], [1, -1], [1, 0], [0, 0]],
+        [[0, -1], [1, -1], [1, 0], [1, 1]],
+        [[1, -1], [0, -1], [0, 0], [0, 1]],
         [[-1, -1], [0, -1], [0, 0], [1, 0]],
+        [[-1, 0], [0, 0], [0, -1], [1, -1]],
         [[-1, 0], [0, 0], [0, -1], [1, 0]]
     ];
     
-    let tmp = translate(1, 1, Shape_preview[nextBlock]);
+    let tmp = translate(1, 2, Shape_preview[nextBlock]);
 
     for (let i = 0; i < 4; i++) {
         drawSquare_preview(tmp[i][0] * 30, tmp[i][1] * 30, nextBlock);
@@ -198,7 +198,7 @@ function drawNext() {
 
 function drawAll(block) {
     ctx.clearRect(0, 0, 300, 600); // Clear the canvas
-    ctx_preview.clearRect(0, 0, 120, 120);
+    ctx_preview.clearRect(0, 0, 120, 180);
     drawMap();
     drawBoard();
     drawNext();
@@ -275,7 +275,7 @@ function initialize() {
     //listen to the keyboard
     //rotate
     document.addEventListener("keydown", function (key) {
-        if (key.keyCode == 38) {
+        if (key.keyCode == 38 && isPause == 0) {
             var tmp = [[], [], [], []];
             for (let i = 0; i < 4; i++) {
                 tmp[i][0] = data[i][1];
@@ -293,7 +293,9 @@ function initialize() {
 
     //move
     document.addEventListener("keydown", function (key) {
-        switch (key.keyCode) {
+        if(isPause == 0)
+        {
+            switch (key.keyCode) {
             case 37:
                 var tmp = [[], [], [], []];
                 for (let i = 0; i < 4; i++) {
@@ -310,12 +312,13 @@ function initialize() {
                 }
 
                 if (checkCol(block, tmp) == 1) { block.x += 1; } break;
-        }
+            }
+        }      
     });
 
     //speed up
     document.addEventListener("keydown", function (key) {
-        if (key.keyCode == 40) {
+        if (key.keyCode == 40 && isPause == 0) {
             photogram = delay;
         }
     })
