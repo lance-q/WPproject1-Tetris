@@ -66,6 +66,11 @@ body {
     max-height: 50%; 
 }
 
+.leftbar p {
+    color: #fff;
+    font-size: 14px;
+}
+
 
 h2 {
     color: #fff;
