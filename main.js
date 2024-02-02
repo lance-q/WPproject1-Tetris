@@ -211,7 +211,7 @@ function resetblock(block) {
     let colFlag = false;
 
     for (let i = 0; i < 4; i++) {
-        if (photogram >= 4 && ((board[data[i][0] + block.x][data[i][1] + block.y + 1] == 1) || data[i][1] + block.y + 1 == row)) {
+        if (photogram >= 45 && ((board[data[i][0] + block.x][data[i][1] + block.y + 1] == 1) || data[i][1] + block.y + 1 == row)) {
             colFlag = true;
         }
     }
@@ -374,5 +374,6 @@ function askForNameAndGreet() {
         var greetingMessage = document.getElementById('greetingMessage');
         greetingMessage.textContent = "Hello! " + name + "! This is Tetris!";
     }
+
 }
 askForNameAndGreet();
