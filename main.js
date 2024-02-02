@@ -116,6 +116,7 @@ function clearline(i) {
     for (let j = i; j > 0; j--) {
         for (let k = 0; k < 10; k++) {
             board[k][j] = board[k][j - 1];
+            board_color[k][j] = board_color[k][j - 1];
         }
     }
 }
