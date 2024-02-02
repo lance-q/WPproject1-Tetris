@@ -9,11 +9,11 @@ var TIMER = document.getElementById('timer');
 var time = 0;
 var sco = 0;
 var bonus = -1;
-
+var FPS = 100;
 var isStart = 0;
 var isPause = 0;
 var gameInterval;
-const delay = 5;
+var delay = 50;
 var photogram = 0;
 var nextBlock;
 
@@ -68,7 +68,7 @@ var obj_falling = function () {
     //this.color=Color[this.type];
 
     this.fall = function () {
-        if (photogram == delay) { photogram = 0; this.y++; }
+        if (photogram >= delay) { photogram = 0; this.y++; }
     }
 
     this.draw = function () {
@@ -83,7 +83,7 @@ function translate(x, y, local)//2-dimensional directly transport(?)
 {
     var global = [[], [], [], []];
     for (let i = 0; i < 4; i++) {
-    //global[i] = [];
+        //global[i] = [];
         global[i][0] = local[i][0] + x;
         global[i][1] = local[i][1] + y;
     }
@@ -91,17 +91,15 @@ function translate(x, y, local)//2-dimensional directly transport(?)
     return global;
 }
 
-function checkCol(block,local) {
-    var global=translate(block.x,block.y,local);
+function checkCol(block, local) {
+    var global = translate(block.x, block.y, local);
     var flag = 1, i = 0;
     do {
         var sx = global[i][0], sy = global[i][1];
-        if (board[sx][sy] == 1)
-        {
+        if (board[sx][sy] == 1) {
             flag = 0;
         }
-        else if(sx > col || sx < 0)
-        {
+        else if (sx > col || sx < 0) {
             flag = 0;
         }
         i++;
@@ -117,7 +115,7 @@ function clearline(i) {
     }
     for (let j = i; j > 0; j--) {
         for (let k = 0; k < 10; k++) {
-            board[k][j] = board[k][j-1];
+            board[k][j] = board[k][j - 1];
         }
     }
 }
@@ -179,10 +177,21 @@ function drawBoard() {
 }
 
 function drawNext() {
-    let tmp = translate(1, 1, Shape[nextBlock]);
+    let Shape_preview =
+    [
+        [],//type0 has no shape
+        [[-1, 0], [0, 0], [1, 0], [2, 0]],
+        [[0, 0], [0, 1], [1, 0], [1, 1]],
+        [[-1, 0], [0, 0], [1, 0], [1, -1]],
+        [[-1, -1], [-1, 0], [0, 0], [1, 0]],
+        [[-1, 1], [0, 1], [0, 0], [1, 0]],
+        [[-1, -1], [0, -1], [0, 0], [1, 0]],
+        [[-1, 0], [0, 0], [0, -1], [1, 0]]
+    ];
     
-    for(let i=0; i<4; i++)
-    {
+    let tmp = translate(1, 1, Shape_preview[nextBlock]);
+
+    for (let i = 0; i < 4; i++) {
         drawSquare_preview(tmp[i][0] * 30, tmp[i][1] * 30, nextBlock);
     }
 }
@@ -201,7 +210,7 @@ function resetblock(block) {
     let colFlag = false;
 
     for (let i = 0; i < 4; i++) {
-        if (photogram >=4 && ((board[data[i][0] + block.x][data[i][1] + block.y + 1] == 1) || data[i][1] + block.y + 1 == row)) {
+        if (photogram >= 4 && ((board[data[i][0] + block.x][data[i][1] + block.y + 1] == 1) || data[i][1] + block.y + 1 == row)) {
             colFlag = true;
         }
     }
@@ -222,20 +231,16 @@ function resetblock(block) {
     }
 }
 
-function fail()
-{
-    for(let i=0; i<col; i++)
-    {
-        if(board[i][0] == 1)
-        {
+function fail() {
+    for (let i = 0; i < col; i++) {
+        if (board[i][0] == 1) {
             alert("GAME OVER");
             restart();
         }
     }
 }
 
-function restart()
-{
+function restart() {
     block = new obj_falling();
     time = 0;
     sco = 0;
@@ -248,13 +253,11 @@ function restart()
     }
 }
 
-function startGame()
-{
-    if(isStart == 0) {isStart = 1; initialize();}
+function startGame() {
+    if (isStart == 0) { isStart = 1; initialize(); }
 }
 
-function initialize()
-{
+function initialize() {
     //create a block
     block = new obj_falling();
     nextBlock = Math.floor(Math.random() * 7) + 1;
@@ -267,20 +270,19 @@ function initialize()
         }
     }
 
-    gameInterval = setInterval(function(){main(block);}, 100);
+    gameInterval = setInterval(function () { main(block); }, 1000 / FPS);
 
     //listen to the keyboard
     //rotate
-    document.addEventListener("keydown", function(key){
-        if (key.keyCode == 38)
-        {
+    document.addEventListener("keydown", function (key) {
+        if (key.keyCode == 38) {
             var tmp = [[], [], [], []];
             for (let i = 0; i < 4; i++) {
                 tmp[i][0] = data[i][1];
                 tmp[i][1] = -data[i][0];
             }
 
-            if (checkCol(block,tmp) == 1) {
+            if (checkCol(block, tmp) == 1) {
                 for (let i = 0; i < 4; i++) {
                     data[i][0] = tmp[i][0];
                     data[i][1] = tmp[i][1];
@@ -290,17 +292,16 @@ function initialize()
     });
 
     //move
-    document.addEventListener("keydown", function(key){
-        switch (key.keyCode)
-        {
+    document.addEventListener("keydown", function (key) {
+        switch (key.keyCode) {
             case 37:
                 var tmp = [[], [], [], []];
                 for (let i = 0; i < 4; i++) {
                     tmp[i][0] = data[i][0] - 1;
                     tmp[i][1] = data[i][1];
                 }
-                
-                if (checkCol(block,tmp) == 1) { block.x -= 1; } break;
+
+                if (checkCol(block, tmp) == 1) { block.x -= 1; } break;
             case 39:
                 var tmp = [[], [], [], []];
                 for (let i = 0; i < 4; i++) {
@@ -308,29 +309,26 @@ function initialize()
                     tmp[i][1] = data[i][1];
                 }
 
-                if (checkCol(block,tmp) == 1) { block.x += 1; } break;
+                if (checkCol(block, tmp) == 1) { block.x += 1; } break;
         }
     });
 
     //speed up
-    document.addEventListener("keydown", function(key){
-        if (key.keyCode == 40)
-        {
+    document.addEventListener("keydown", function (key) {
+        if (key.keyCode == 40) {
             photogram = delay;
         }
     })
 
     //pause
-    document.addEventListener("keydown", function(key){
-        if(key.keyCode == 32)//32 is space
+    document.addEventListener("keydown", function (key) {
+        if (key.keyCode == 32)//32 is space
         {
-            if(isPause == 1)
-            {
+            if (isPause == 1) {
                 isPause = 0;
-                gameInterval = setInterval(function(){main(block);}, 100);
+                gameInterval = setInterval(function () { main(block); }, 1000 / FPS);
             }
-            else
-            {
+            else {
                 isPause = 1;
                 clearInterval(gameInterval);
             }
@@ -342,21 +340,22 @@ function initialize()
 }
 
 function main(block) {
+    //delay = delay - Math.floor(sco / 10);
+    //delay = 5 * Math.pow(0.8, Math.floor(sco / 50));
     drawAll(block);
     fail();
     checkline();
 
-    if(bonus!=-1){
-        sco=sco+10*Math.pow(2,bonus);
-        bonus=-1;
+    if (bonus != -1) {
+        sco = sco + 10 * Math.pow(3, bonus);
+        bonus = -1;
     }
-    score.innerHTML=sco;
+    score.innerHTML = sco;
     TIMER.innerHTML = time.toFixed(2);
-    time+=0.1;
+    time += 0.01;
 
     //if a block falls to the bottom, create a new one
     resetblock(block);
-    
     block.fall();
     photogram++;
 }
@@ -366,10 +365,10 @@ function askForNameAndGreet() {
     var name = prompt("Please Enter Your Name:");
 
     if (name === null || name.trim() === "") {
-    alert("Hello!");
+        alert("Hello!");
     } else {
-    var greetingMessage = document.getElementById('greetingMessage');
-    greetingMessage.textContent = "Hello! " + name + "! This is Tetris!";
+        var greetingMessage = document.getElementById('greetingMessage');
+        greetingMessage.textContent = "Hello! " + name + "! This is Tetris!";
     }
 }
 askForNameAndGreet();
